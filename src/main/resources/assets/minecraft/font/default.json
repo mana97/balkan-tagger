@@ -1,0 +1,94 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "tier-tagger:mctiers/axe.png",
+      "ascent": 8,
+      "height": 8,
+      "chars": [
+        "\ue701"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "tier-tagger:mctiers/mace.png",
+      "ascent": 8,
+      "height": 8,
+      "chars": [
+        "\ue702"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "tier-tagger:mctiers/nethop.png",
+      "ascent": 8,
+      "height": 8,
+      "chars": [
+        "\ue703"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "tier-tagger:mctiers/pot.png",
+      "ascent": 8,
+      "height": 8,
+      "chars": [
+        "\ue704"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "tier-tagger:mctiers/smp.png",
+      "ascent": 8,
+      "height": 8,
+      "chars": [
+        "\ue705"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "tier-tagger:mctiers/sword.png",
+      "ascent": 8,
+      "height": 8,
+      "chars": [
+        "\ue706"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "tier-tagger:mctiers/uhc.png",
+      "ascent": 8,
+      "height": 8,
+      "chars": [
+        "\ue707"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "tier-tagger:mctiers/vanilla.png",
+      "ascent": 8,
+      "height": 8,
+      "chars": [
+        "\ue708"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "tier-tagger:subtiers/dia_smp.png",
+      "ascent": 8,
+      "height": 8,
+      "chars": [
+        "\ue806"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "tier-tagger:tierlists/mctiers.png",
+      "ascent": 10,
+      "height": 12,
+      "chars": [
+        "\ue901"
+      ]
+    }
+  ]
+}
