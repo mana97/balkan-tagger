@@ -33,7 +33,7 @@ public class TierTaggerConfig implements Serializable {
      * <p>the field was renamed to do a little trolling and force it setting to the default value in players' config</p>
      * <p>previous name(s): {@code baseUrl}</p>
      */
-    private String apiUrl = "https://tiers.seiky.net";
+    private String apiUrl = "https://balkantiers.com";
 
     public GameMode getGameMode() {
         Optional<GameMode> opt = TierCache.findMode(this.gameMode);

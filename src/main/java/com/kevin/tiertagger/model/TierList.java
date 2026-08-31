@@ -9,7 +9,7 @@ import java.util.Optional;
 @Getter
 @AllArgsConstructor
 public enum TierList {
-    BALKANTIERS("Balkan Tiers", "https://tiers.seiky.net", '\uE901'),
+    BALKANTIERS("Balkan Tiers", "https://balkantiers.com", '\uE901'),
     ;
 
     private final String name;
