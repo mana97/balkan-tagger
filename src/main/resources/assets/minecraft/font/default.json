@@ -83,6 +83,15 @@
     },
     {
       "type": "bitmap",
+      "file": "tier-tagger:subtiers/spear.png",
+      "ascent": 8,
+      "height": 8,
+      "chars": [
+        "\ue807"
+      ]
+    },
+    {
+      "type": "bitmap",
       "file": "tier-tagger:tierlists/mctiers.png",
       "ascent": 10,
       "height": 12,

@@ -48,6 +48,7 @@ public record GameMode(String id, String title) {
             case "uhc" -> Pair.of('\uE707', TextColor.fromLegacyFormat(ChatFormatting.RED));
             case "vanilla" -> Pair.of('\uE708', TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE));
             case "dia_smp" -> Pair.of('\uE806', TextColor.fromRgb(0x8c668b));
+            case "spear" -> Pair.of('\uE807', TextColor.fromRgb(0x8fa3c7)); // Balkan Tiers 10. mod (03.09.)
             default -> Pair.of('•', TextColor.fromLegacyFormat(ChatFormatting.WHITE));
         };
     }
