@@ -16,7 +16,7 @@ certified testers rank players across 9 gamemodes on the official mctiers ladder
 ## Links
 
 - 🌐 Leaderboards: https://balkantiers.com
-- 💬 Testing Discord: https://discord.gg/2Jn5vR4Bw
+- 💬 Testing Discord: https://discord.gg/zy8Q2Nu482
 - 🎮 Seiky Network: https://discord.gg/phzcbJSkdf
 
 ## Building
