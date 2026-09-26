@@ -1,12 +1,12 @@
 # Balkan Tagger
 
-**See every player's [Balkan Tiers](https://tiers.seiky.net) rank — right on their nametag.**
+**See every player's [Balkan Tiers](https://balkantiers.com) rank — right on their nametag.**
 
 Balkan Tagger is a Fabric mod for Minecraft **1.21.11** that overlays official Balkan Tiers
 rankings (HT1–LT5) next to player names on tab lists and above their heads in-game.
 
 Balkan Tiers is the competitive PvP tier testing platform of **Seiky Network** —
-certified testers rank players across 9 gamemodes on the official mctiers ladder.
+certified testers rank players across 10 gamemodes on the official mctiers ladder.
 
 ## Requirements
 

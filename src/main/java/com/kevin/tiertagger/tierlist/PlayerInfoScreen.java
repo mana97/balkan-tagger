@@ -87,7 +87,7 @@ public class PlayerInfoScreen extends CloseableScreen {
     private Component getRegionText(PlayerInfo info) {
         return Component.empty()
                 .append(Component.literal("Region: "))
-                .append(Component.literal(info.region()).withStyle(s -> s.withColor(info.getRegionColor())));
+                .append(Component.literal(info.getRegionLabel()).withStyle(s -> s.withColor(info.getRegionColor())));
     }
 
     private Component getPointsText(PlayerInfo info) {
@@ -100,11 +100,12 @@ public class PlayerInfoScreen extends CloseableScreen {
     }
 
     private Component getRankText(PlayerInfo info) {
+        // podium colors of balkantiers.com; everyone else in a readable gray (the old navy was invisible in-game)
         int color = switch (info.overall()) {
-            case 1 -> 0xe5ba43;
-            case 2 -> 0x808c9c;
-            case 3 -> 0xb56326;
-            default -> 0x1e2634;
+            case 1 -> 0xFFB02E;
+            case 2 -> 0xB9C6E4;
+            case 3 -> 0xFF7A4D;
+            default -> 0xA9ADC1;
         };
 
         return Component.empty()

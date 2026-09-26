@@ -64,6 +64,12 @@ public class TierTagger implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        // 1.0.4: untouched old default tier colors -> balkantiers.com colors (custom colors stay)
+        if (manager.getConfig().migrateOldDefaultColors()) {
+            manager.saveConfig();
+            logger.info("Tier colors updated to the Balkan Tiers palette");
+        }
+
         TierCache.init();
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registry) -> dispatcher.register(

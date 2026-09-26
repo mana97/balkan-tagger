@@ -15,7 +15,8 @@ import java.net.http.HttpResponse;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings, String region, int points,
+public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings, @Nullable String region,
+                         @Nullable @SerializedName("region_name") String regionName, int points,
                          int overall, List<Badge> badges, @SerializedName("combat_master") boolean combatMaster) {
     public record Ranking(int tier, int pos, @Nullable @SerializedName("peak_tier") Integer peakTier,
                           @Nullable @SerializedName("peak_pos") Integer peakPos, long attained,
@@ -50,14 +51,19 @@ public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings
     public record Badge(String title, String desc) {
     }
 
-    private static final Map<String, Integer> REGION_COLORS = Map.of(
-            "NA", 0xff6a6e,
-            "EU", 0x6aff6e,
-            "SA", 0xff9900,
-            "AU", 0xf6b26b,
-            "ME", 0xffd966,
-            "AS", 0xc27ba0,
-            "AF", 0x674ea7
+    // Balkan Tiers regions, same colors as balkantiers.com (--rg-* in style.css)
+    private static final Map<String, Integer> REGION_COLORS = Map.ofEntries(
+            Map.entry("CRO", 0x5ca0ff),
+            Map.entry("SRB", 0xe05cff),
+            Map.entry("BIH", 0xffd75e),
+            Map.entry("SVN", 0x3fd6c2),
+            Map.entry("MKD", 0xffb02e),
+            Map.entry("MNE", 0xff8c6b),
+            Map.entry("KOS", 0x9d8cff),
+            Map.entry("ALB", 0xff5c5c),
+            Map.entry("BGR", 0x4ade80),
+            Map.entry("GRC", 0x38e8ff),
+            Map.entry("INT", 0x8a8da3)
     );
 
     public static CompletableFuture<PlayerInfo> get(HttpClient client, UUID uuid) {
@@ -97,7 +103,16 @@ public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings
     }
 
     public int getRegionColor() {
+        if (this.region == null) return 0x8a8da3;
         return REGION_COLORS.getOrDefault(this.region.toUpperCase(Locale.ROOT), 0xffffff);
+    }
+
+    /**
+     * "Croatia" when the API sends the full name, otherwise the region code ("CRO"), or "-" for no region.
+     */
+    public String getRegionLabel() {
+        if (this.regionName != null && !this.regionName.isBlank()) return this.regionName;
+        return this.region == null || this.region.isBlank() ? "-" : this.region;
     }
 
     public static Optional<NamedRanking> getHighestRanking(Map<String, Ranking> rankings) {
@@ -110,13 +125,14 @@ public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings
     @Getter
     @AllArgsConstructor
     public enum PointInfo {
-        COMBAT_GRANDMASTER("Combat Grandmaster", 0xE6C622, 0xFDE047),
-        COMBAT_MASTER("Combat Master", 0xFBB03B, 0xFFD13A),
-        COMBAT_ACE("Combat Ace", 0xCD285C, 0xD65474),
-        COMBAT_SPECIALIST("Combat Specialist", 0xAD78D8, 0xC7A3E8),
-        COMBAT_CADET("Combat Cadet", 0x9291D9, 0xADACE2),
-        COMBAT_NOVICE("Combat Novice", 0x9291D9, 0xFFFFFF),
-        ROOKIE("Rookie", 0x6C7178, 0x8B979C),
+        // Balkan Tiers titles (no "Combat" prefix since 26.09.2026), colors = balkantiers.com title colors
+        GRANDMASTER("Grandmaster", 0xFFC861, 0xFFC861),
+        MASTER("Master", 0xFF5C8A, 0xFF5C8A),
+        ACE("Ace", 0xE05CFF, 0xE05CFF),
+        SPECIALIST("Specialist", 0x9D7BFF, 0x9D7BFF),
+        CADET("Cadet", 0x5CA0FF, 0x5CA0FF),
+        NOVICE("Novice", 0x3FD6C2, 0x3FD6C2),
+        ROOKIE("Rookie", 0x8A8DA3, 0x8A8DA3),
         UNRANKED("Unranked", 0xFFFFFF, 0xFFFFFF);
 
         private final String title;
@@ -126,17 +142,17 @@ public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings
 
     public PointInfo getPointInfo() {
         if (this.points >= 400) {
-            return PointInfo.COMBAT_GRANDMASTER;
+            return PointInfo.GRANDMASTER;
         } else if (this.points >= 250) {
-            return PointInfo.COMBAT_MASTER;
+            return PointInfo.MASTER;
         } else if (this.points >= 100) {
-            return PointInfo.COMBAT_ACE;
+            return PointInfo.ACE;
         } else if (this.points >= 50) {
-            return PointInfo.COMBAT_SPECIALIST;
+            return PointInfo.SPECIALIST;
         } else if (this.points >= 20) {
-            return PointInfo.COMBAT_CADET;
+            return PointInfo.CADET;
         } else if (this.points >= 10) {
-            return PointInfo.COMBAT_NOVICE;
+            return PointInfo.NOVICE;
         } else if (this.points >= 1) {
             return PointInfo.ROOKIE;
         } else {
