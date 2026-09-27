@@ -95,11 +95,30 @@ public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings
         final HttpRequest request = HttpRequest.newBuilder(URI.create(endpoint)).GET().build();
 
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
+                .thenApply(r -> {
+                    // 1.0.5: 404 = not on Balkan Tiers, anything else but 200 = API problem (/bktiers shows which one)
+                    if (r.statusCode() == 404) throw new SearchException("Player not found: " + query, true);
+                    if (r.statusCode() != 200) throw new SearchException("Balkan Tiers API HTTP " + r.statusCode(), false);
+                    return r.body();
+                })
                 .thenApply(s -> TierTagger.GSON.fromJson(s, PlayerInfo.class))
                 .whenComplete((i, t) -> {
                     if (t != null) TierTagger.getLogger().warn("Error searching player {}", query, t);
                 });
+    }
+
+    /** Search failure; notFound = the player simply isn't on Balkan Tiers (HTTP 404), otherwise the API failed. */
+    public static final class SearchException extends RuntimeException {
+        private final boolean notFound;
+
+        public SearchException(String message, boolean notFound) {
+            super(message);
+            this.notFound = notFound;
+        }
+
+        public boolean isNotFound() {
+            return notFound;
+        }
     }
 
     public int getRegionColor() {

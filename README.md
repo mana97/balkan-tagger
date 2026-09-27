@@ -8,6 +8,14 @@ rankings (HT1–LT5) next to player names on tab lists and above their heads in-
 Balkan Tiers is the competitive PvP tier testing platform of **Seiky Network** —
 certified testers rank players across 10 gamemodes on the official mctiers ladder.
 
+## Commands
+
+Client-side, so they work on **every server**:
+
+- `/bktiers <player>` — opens the player's Balkan Tiers profile (skin, tiers, region, points, title)
+- `/bktiers` — opens the player search screen
+- `/tiertagger <player>` — prints the player's tiers in chat
+
 ## Requirements
 
 - [Fabric Loader](https://fabricmc.net/use/installer/) for MC 1.21.11

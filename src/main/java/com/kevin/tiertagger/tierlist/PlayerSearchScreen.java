@@ -70,19 +70,7 @@ public class PlayerSearchScreen extends CloseableScreen {
         this.searching = true;
         this.searchButton.setMessage(Component.translatable("tiertagger.search.loading"));
 
-        Services services = Minecraft.getInstance().services();
-        CompletableFuture<PlayerSkinWidget> skinFuture = CompletableFuture.supplyAsync(() -> {
-            GameProfile profile = services.profileResolver().fetchByName(username)
-                    .orElseGet(() -> new GameProfile(UUID.randomUUID(), username));
-
-            Supplier<PlayerSkin> skinSupplier = Minecraft.getInstance().getSkinManager().createLookup(profile, true);
-            PlayerSkinWidget skin = new PlayerSkinWidget(60, 144, Minecraft.getInstance().getEntityModels(), skinSupplier);
-            skin.setPosition(this.width / 2 - 65, (this.height - 144) / 2);
-            return skin;
-        });
-
-        this.future = TierCache.searchPlayer(username)
-                .thenCombine(skinFuture, (info, skin) -> new PlayerInfoScreen(this, info, skin))
+        this.future = loadProfile(this, username, this.width, this.height)
                 .thenAccept(screen -> Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(screen)))
                 .whenComplete((v, t) -> {
                     if (t != null) {
@@ -91,6 +79,26 @@ public class PlayerSearchScreen extends CloseableScreen {
                     this.searching = false;
                     this.searchButton.setMessage(Component.translatable("tiertagger.search"));
                 });
+    }
+
+    /**
+     * Tiers search + skin download in parallel, resolved to a ready profile screen of the given size.
+     * Shared by this screen and {@code /bktiers <player>} (1.0.5).
+     */
+    public static CompletableFuture<PlayerInfoScreen> loadProfile(Screen parent, String username, int width, int height) {
+        Services services = Minecraft.getInstance().services();
+        CompletableFuture<PlayerSkinWidget> skinFuture = CompletableFuture.supplyAsync(() -> {
+            GameProfile profile = services.profileResolver().fetchByName(username)
+                    .orElseGet(() -> new GameProfile(UUID.randomUUID(), username));
+
+            Supplier<PlayerSkin> skinSupplier = Minecraft.getInstance().getSkinManager().createLookup(profile, true);
+            PlayerSkinWidget skin = new PlayerSkinWidget(60, 144, Minecraft.getInstance().getEntityModels(), skinSupplier);
+            skin.setPosition(width / 2 - 65, (height - 144) / 2);
+            return skin;
+        });
+
+        return TierCache.searchPlayer(username)
+                .thenCombine(skinFuture, (info, skin) -> new PlayerInfoScreen(parent, info, skin));
     }
 
     @Override

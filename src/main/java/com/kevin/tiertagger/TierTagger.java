@@ -7,6 +7,8 @@ import com.google.gson.JsonObject;
 import com.kevin.tiertagger.config.TierTaggerConfig;
 import com.kevin.tiertagger.model.GameMode;
 import com.kevin.tiertagger.model.PlayerInfo;
+import com.kevin.tiertagger.tierlist.PlayerSearchScreen;
+import com.kevin.tiertagger.tierlist.ProfileLoadingScreen;
 import com.mojang.brigadier.context.CommandContext;
 import lombok.Getter;
 import net.fabricmc.api.ModInitializer;
@@ -18,6 +20,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -39,6 +43,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
@@ -72,10 +78,19 @@ public class TierTagger implements ModInitializer {
 
         TierCache.init();
 
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registry) -> dispatcher.register(
-                literal(MOD_ID)
-                        .then(argument("player", PlayerArgumentType.player())
-                                .executes(TierTagger::displayTierInfo))));
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registry) -> {
+            dispatcher.register(literal(MOD_ID)
+                    .then(argument("player", PlayerArgumentType.player())
+                            .executes(TierTagger::displayTierInfo)));
+
+            // 1.0.5: /bktiers <player> opens the Balkan Tiers profile screen (skin + tiers), /bktiers the search screen.
+            // Client-side like the Tiers mod's /tiers: never sent to the server, so it works on every server.
+            dispatcher.register(literal("bktiers")
+                    .executes(ctx -> openScreenLater(new PlayerSearchScreen(null), 0))
+                    .then(argument("player", PlayerArgumentType.player())
+                            .executes(ctx -> openScreenLater(new ProfileLoadingScreen(null,
+                                    ctx.getArgument("player", PlayerArgumentType.PlayerSelector.class).name()), 0))));
+        });
 
         Ukutils.registerKeybinding(new KeyMapping("tiertagger.keybind.gamemode", GLFW.GLFW_KEY_UNKNOWN, KeyMapping.Category.register(Identifier.fromNamespaceAndPath("tiertagger", "key"))),
                 mc -> {
@@ -162,6 +177,22 @@ public class TierTagger implements ModInitializer {
 
             return tierText;
         }
+    }
+
+    /**
+     * The chat screen closes (setScreen(null)) right after a client command runs, which would instantly close a screen
+     * opened by the command itself -> open it a moment later on the render thread (retry while chat is still open).
+     */
+    private static int openScreenLater(Screen screen, int attempt) {
+        CompletableFuture.delayedExecutor(50, TimeUnit.MILLISECONDS).execute(() -> Minecraft.getInstance().execute(() -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.screen instanceof ChatScreen && attempt < 20) {
+                openScreenLater(screen, attempt + 1);
+            } else {
+                mc.setScreen(screen);
+            }
+        }));
+        return 1;
     }
 
     private static int displayTierInfo(CommandContext<FabricClientCommandSource> ctx) {
