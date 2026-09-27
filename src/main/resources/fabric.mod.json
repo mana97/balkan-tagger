@@ -3,7 +3,7 @@
   "id": "tier-tagger",
   "version": "${version}",
   "name": "Balkan Tagger",
-  "description": "Display Balkan Tiers rankings in player nametags! Official mod of the Balkan Tiers testing platform (Seiky Network) - balkantiers.com, discord.gg/bktiers. Fork of TierTagger.",
+  "description": "Display Balkan Tiers rankings in player nametags! Official mod of the Balkan Tiers testing platform (Seiky Network) - balkantiers.com, discord.gg/blkntiers. Fork of TierTagger.",
   "authors": [
     "Balkan Tiers",
     "Seiky Network",
@@ -36,7 +36,7 @@
   "custom": {
     "modmenu": {
       "links": {
-        "modmenu.discord": "https://discord.gg/bktiers",
+        "modmenu.discord": "https://discord.gg/blkntiers",
         "modmenu.modrinth": "https://modrinth.com/mod/balkantagger"
       }
     }

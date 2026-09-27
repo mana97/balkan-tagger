@@ -24,7 +24,7 @@ Client-side, so they work on **every server**:
 ## Links
 
 - 🌐 Leaderboards: https://balkantiers.com
-- 💬 Testing Discord: https://discord.gg/bktiers
+- 💬 Testing Discord: https://discord.gg/blkntiers
 - 🎮 Seiky Network: https://discord.gg/seiky
 
 ## Building
