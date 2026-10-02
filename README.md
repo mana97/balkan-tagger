@@ -1,31 +1,28 @@
 # Balkan Tagger
 
-**See every player's [Balkan Tiers](https://balkantiers.com) rank — right on their nametag.**
+**Display every player's official [Balkan Tiers](https://balkantiers.com) rank directly in-game.**
 
-Balkan Tagger is a Fabric mod for Minecraft **1.21.11** that overlays official Balkan Tiers
-rankings (HT1–LT5) next to player names on tab lists and above their heads in-game.
+Balkan Tagger is a Fabric mod for Minecraft **1.21.11**. It retrieves official tier data from the Balkan Tiers ranking platform and displays player rankings (HT1–LT5) above nametags and in the player list.
 
-Balkan Tiers is the competitive PvP tier testing platform of **Seiky Network** —
-certified testers rank players across 10 gamemodes on the HT1–LT5 ladder.
+Balkan Tiers is the PvP tier testing platform of **Seiky Network**: certified testers rank players across ten gamemodes (Sword, Axe, Mace, DiaPot, NethPot, UHC, SMP, DiaSMP, Crystal, Spear).
 
 ## Commands
 
-Client-side, so they work on **every server**:
+Client-side commands that work on every server:
 
-- `/bktiers <player>` — opens the player's Balkan Tiers profile (skin, tiers, region, points, title)
-- `/bktiers` — opens the player search screen
-- `/tiertagger <player>` — prints the player's tiers in chat
+* `/bktiers <player>` opens the player's Balkan Tiers profile (skin, tiers, points, global ranking, region, title).
+* `/bktiers` opens the player search.
+* `/tiertagger <player>` prints the player's tiers in chat.
 
-## Requirements
+## Installation
 
-- [Fabric Loader](https://fabricmc.net/use/installer/) for MC 1.21.11
-- [ukulib](https://modrinth.com/mod/ukulib)
+1. Install Fabric Loader for Minecraft **1.21.11**.
+2. Place Balkan Tagger, [Fabric API](https://modrinth.com/mod/fabric-api) and [ukulib](https://modrinth.com/mod/ukulib) into your `mods` directory.
+3. Launch Minecraft.
 
-## Links
+Balkan Tagger should not be installed together with the original TierTagger or other mods based on it, as they share internal components and are not compatible with each other.
 
-- 🌐 Leaderboards: https://balkantiers.com
-- 💬 Testing Discord: https://discord.gg/blkntiers
-- 🎮 Seiky Network: https://discord.gg/seiky
+Configuration is available through **Mod Menu → Balkan Tagger → Configure**.
 
 ## Building
 
@@ -33,9 +30,14 @@ Client-side, so they work on **every server**:
 ./gradlew build
 ```
 
-The jar lands in `build/libs/`.
+The jar is written to `build/libs/`.
 
-## Credits & License
+## Links
 
-Fork of [TierTagger](https://github.com/mctiers-dev/TierTagger) by uku,
-originally created by netiyiy. Licensed under **MPL-2.0** — see [LICENSE](LICENSE).
+* Leaderboard: https://balkantiers.com
+* Testing Discord: https://discord.gg/blkntiers
+* Seiky Network Discord: https://discord.gg/seiky
+
+## Credits and License
+
+Balkan Tagger is based on [TierTagger](https://github.com/mctiers-dev/TierTagger) by uku (mctiers-dev), originally created by netiyiy, and has been adapted for the Balkan Tiers platform. Licensed under **MPL-2.0**, see [LICENSE](LICENSE).
