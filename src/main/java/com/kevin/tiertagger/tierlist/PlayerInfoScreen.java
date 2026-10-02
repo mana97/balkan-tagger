@@ -44,7 +44,7 @@ public class PlayerInfoScreen extends CloseableScreen {
         int rankingY = startY + infoHeight;
 
         for (PlayerInfo.NamedRanking namedRanking : this.info.getSortedTiers()) {
-            // ugly "fix" to avoid crashes if upstream doesn't have the right names
+            // fallback that avoids a crash when the API sends a gamemode this version does not know
             if (namedRanking.mode() == null) continue;
 
             StringWidget text = new StringWidget(formatTier(namedRanking.mode(), namedRanking.ranking()), this.font);

@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 /**
- * {@code /bktiers <player>} (1.0.5): shows "Loading X's profile..." while the Balkan Tiers search and the skin load,
+ * {@code /bktiers <player>}: shows "Loading X's profile..." while the Balkan Tiers search and the skin load,
  * then switches to the {@link PlayerInfoScreen}. On failure it tells whether the player isn't on Balkan Tiers or the
  * API is unreachable, with a Retry button - like the Tiers mod's profile screen.
  */

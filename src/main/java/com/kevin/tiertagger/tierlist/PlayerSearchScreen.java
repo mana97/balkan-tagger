@@ -83,7 +83,7 @@ public class PlayerSearchScreen extends CloseableScreen {
 
     /**
      * Tiers search + skin download in parallel, resolved to a ready profile screen of the given size.
-     * Shared by this screen and {@code /bktiers <player>} (1.0.5).
+     * Shared by this screen and {@code /bktiers <player>}.
      */
     public static CompletableFuture<PlayerInfoScreen> loadProfile(Screen parent, String username, int width, int height) {
         Services services = Minecraft.getInstance().services();

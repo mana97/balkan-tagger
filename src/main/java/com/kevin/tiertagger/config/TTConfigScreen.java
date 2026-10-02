@@ -85,7 +85,7 @@ public class TTConfigScreen extends TabbedConfigScreen<TierTaggerConfig> {
 
         @Override
         protected WidgetCreator[] getWidgets(TierTaggerConfig config) {
-            // i genuinely don't understand but chaining the calls just EXPLODES????
+            // built in two steps: when chained, Java cannot infer the entry type of the first lambda
             Comparator<Map.Entry<String, Integer>> comparator = Comparator.comparing(e -> e.getKey().charAt(2));
             comparator = comparator.thenComparing(e -> e.getKey().charAt(0));
 

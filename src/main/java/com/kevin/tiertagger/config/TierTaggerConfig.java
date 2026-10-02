@@ -25,13 +25,13 @@ public class TierTaggerConfig implements Serializable {
     private boolean showIcons = true;
     private boolean playerList = true;
     private int retiredColor = 0xa2d6ff;
-    // note: this is a GSON internal class. this *might* break in the future
+    // note: this is a GSON internal class and may change in a future GSON release
     private LinkedTreeMap<String, Integer> tierColors = defaultColors();
 
-    // === internal stuff ===
+    // internal
 
     /**
-     * <p>the field was renamed to do a little trolling and force it setting to the default value in players' config</p>
+     * <p>the field was renamed so that existing player configs fall back to the default value</p>
      * <p>previous name(s): {@code baseUrl}</p>
      */
     private String apiUrl = "https://balkantiers.com";
@@ -66,14 +66,14 @@ public class TierTaggerConfig implements Serializable {
         return colors;
     }
 
-    // defaults up to 1.0.3 (the original mctiers colors)
+    // previous default colors (the original MCTiers colors)
     private static final Map<String, Integer> OLD_DEFAULT_COLORS = Map.of(
             "HT1", 0xe8ba3a, "LT1", 0xd5b355, "HT2", 0xc4d3e7, "LT2", 0xa0a7b2, "HT3", 0xf89f5a,
             "LT3", 0xc67b42, "HT4", 0x81749a, "LT4", 0x655b79, "HT5", 0x8f82a8, "LT5", 0x655b79);
 
     /**
-     * 1.0.4: a config that still has the untouched old default colors switches to the new site colors.
-     * Colors a player picked himself are left alone. Returns true when something changed (caller saves).
+     * A config that still has the untouched previous default colors switches to the site colors.
+     * Colors a player picked are left alone. Returns true when something changed (caller saves).
      */
     public boolean migrateOldDefaultColors() {
         if (this.tierColors == null || this.tierColors.size() != OLD_DEFAULT_COLORS.size()) return false;

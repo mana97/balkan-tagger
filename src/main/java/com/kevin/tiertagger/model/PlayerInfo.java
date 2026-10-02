@@ -96,7 +96,7 @@ public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings
 
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(r -> {
-                    // 1.0.5: 404 = not on Balkan Tiers, anything else but 200 = API problem (/bktiers shows which one)
+                    // 404 = not on Balkan Tiers, anything else but 200 = API problem (/bktiers shows which one)
                     if (r.statusCode() == 404) throw new SearchException("Player not found: " + query, true);
                     if (r.statusCode() != 200) throw new SearchException("Balkan Tiers API HTTP " + r.statusCode(), false);
                     return r.body();
@@ -144,7 +144,7 @@ public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings
     @Getter
     @AllArgsConstructor
     public enum PointInfo {
-        // Balkan Tiers titles (no "Combat" prefix since 26.09.2026), colors = balkantiers.com title colors
+        // Balkan Tiers titles; colors = balkantiers.com title colors
         GRANDMASTER("Grandmaster", 0xFFC861, 0xFFC861),
         MASTER("Master", 0xFF5C8A, 0xFF5C8A),
         ACE("Ace", 0xE05CFF, 0xE05CFF),

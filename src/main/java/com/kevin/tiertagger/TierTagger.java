@@ -63,14 +63,14 @@ public class TierTagger implements ModInitializer {
     @Getter
     private static final HttpClient client = HttpClient.newHttpClient();
 
-    // === version checker stuff ===
+    // version check
     @Getter
     private static Version latestVersion = null;
     private static final AtomicBoolean isObsolete = new AtomicBoolean(false);
 
     @Override
     public void onInitialize() {
-        // 1.0.4: untouched old default tier colors -> balkantiers.com colors (custom colors stay)
+        // configs that still use the old default tier colors move to the balkantiers.com colors (custom colors stay)
         if (manager.getConfig().migrateOldDefaultColors()) {
             manager.saveConfig();
             logger.info("Tier colors updated to the Balkan Tiers palette");
@@ -83,7 +83,7 @@ public class TierTagger implements ModInitializer {
                     .then(argument("player", PlayerArgumentType.player())
                             .executes(TierTagger::displayTierInfo)));
 
-            // 1.0.5: /bktiers <player> opens the Balkan Tiers profile screen (skin + tiers), /bktiers the search screen.
+            // /bktiers <player> opens the Balkan Tiers profile screen (skin + tiers), /bktiers the search screen.
             // Client-side like the Tiers mod's /tiers: never sent to the server, so it works on every server.
             dispatcher.register(literal("bktiers")
                     .executes(ctx -> openScreenLater(new PlayerSearchScreen(null), 0))
@@ -168,7 +168,7 @@ public class TierTagger implements ModInitializer {
             MutableComponent tierText = getTierText(ranking.tier(), ranking.pos(), false);
 
             if (showPeak && ranking.comparablePeak() < ranking.comparableTier()) {
-                // warning caused by potential NPE by unboxing of peak{Tier,Pos} which CANNOT happen, see impl of comparablePeak
+                // the IDE warns about unboxing peak{Tier,Pos}; comparablePeak guarantees both are set
                 // noinspection DataFlowIssue
                 tierText.append(Component.literal(" (peak: ").withStyle(s -> s.withColor(ChatFormatting.GRAY)))
                         .append(getTierText(ranking.peakTier(), ranking.peakPos(), false))
@@ -245,7 +245,7 @@ public class TierTagger implements ModInitializer {
     }
 
     private static void checkForUpdates() {
-        // SwiftTagger fork: no update checks against the original Modrinth project.
+        // This fork does not check the original Modrinth project for updates.
         if (true) return;
         String versionParam = "[\"%s\"]".formatted(SharedConstants.getCurrentVersion().name());
         String fullUrl = UPDATE_URL_FORMAT.formatted(URLEncoder.encode(versionParam, StandardCharsets.UTF_8));
