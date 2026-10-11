@@ -35,7 +35,7 @@ The jar is written to `build/libs/`.
 ## Links
 
 * Leaderboard: https://balkantiers.com
-* Testing Discord: https://discord.gg/blkntiers
+* Testing Discord: https://discord.gg/balkantiers
 * Seiky Network Discord: https://discord.gg/seiky
 
 ## Credits and License
