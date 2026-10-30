@@ -70,11 +70,15 @@ public class TierTagger implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        TierTaggerConfig config = manager.getConfig();
         // configs that still use the old default tier colors move to the balkantiers.com colors (custom colors stay)
-        if (manager.getConfig().migrateOldDefaultColors()) {
-            manager.saveConfig();
-            logger.info("Tier colors updated to the Balkan Tiers palette");
-        }
+        boolean colors = config.migrateOldDefaultColors();
+        // an old tiertagger.toml from SwiftTagger or the original TierTagger can still point at another API
+        String oldApi = config.getApiUrl();
+        boolean api = config.migrateForeignApiUrl();
+        if (colors || api) manager.saveConfig();
+        if (colors) logger.info("Tier colors updated to the Balkan Tiers palette");
+        if (api) logger.info("API address {} replaced with {}", oldApi, config.getApiUrl());
 
         TierCache.init();
 

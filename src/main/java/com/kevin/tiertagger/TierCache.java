@@ -34,12 +34,21 @@ public class TierCache {
 
     public static Optional<Map<String, PlayerInfo.Ranking>> getPlayerRankings(UUID uuid) {
         return TIERS.computeIfAbsent(uuid, u -> {
-            if (uuid.version() == 4) {
+            if (isPlayerUuid(uuid)) {
                 PlayerInfo.getRankings(TierTagger.getClient(), uuid).thenAccept(info -> TIERS.put(uuid, Optional.ofNullable(info)));
             }
 
             return Optional.empty();
         });
+    }
+
+    /**
+     * Version 4 = premium (Mojang) account, version 3 = offline-mode (cracked) player, which Balkan Tiers knows by
+     * its offline UUID. Other versions are NPCs and fake entries and are never sent to the API.
+     */
+    static boolean isPlayerUuid(UUID uuid) {
+        int version = uuid.version();
+        return version == 4 || version == 3;
     }
 
     public static CompletableFuture<PlayerInfo> searchPlayer(String query) {

@@ -83,8 +83,9 @@ public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings
         final HttpRequest request = HttpRequest.newBuilder(URI.create(endpoint)).GET().build();
 
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenApply(s -> TierTagger.GSON.fromJson(s, new TypeToken<Map<String, Ranking>>() {}))
+                // 404 = not on Balkan Tiers (most players on a server): no tier, nothing to log
+                .thenApply(r -> r.statusCode() == 404 ? null
+                        : TierTagger.GSON.fromJson(r.body(), new TypeToken<Map<String, Ranking>>() {}))
                 .whenComplete((i, t) -> {
                     if (t != null) TierTagger.getLogger().warn("Error getting player rankings ({})", uuid, t);
                 });

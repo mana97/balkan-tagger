@@ -10,6 +10,8 @@ import lombok.Setter;
 import net.uku3lig.ukulib.config.option.StringTranslatable;
 
 import java.io.Serializable;
+import java.net.URI;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,6 +20,8 @@ import java.util.Optional;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TierTaggerConfig implements Serializable {
+    public static final String DEFAULT_API_URL = "https://balkantiers.com";
+
     private boolean enabled = true;
     private String gameMode = "vanilla";
     private boolean showRetired = true;
@@ -34,7 +38,7 @@ public class TierTaggerConfig implements Serializable {
      * <p>the field was renamed so that existing player configs fall back to the default value</p>
      * <p>previous name(s): {@code baseUrl}</p>
      */
-    private String apiUrl = "https://balkantiers.com";
+    private String apiUrl = DEFAULT_API_URL;
 
     public GameMode getGameMode() {
         Optional<GameMode> opt = TierCache.findMode(this.gameMode);
@@ -79,10 +83,42 @@ public class TierTaggerConfig implements Serializable {
         if (this.tierColors == null || this.tierColors.size() != OLD_DEFAULT_COLORS.size()) return false;
         for (Map.Entry<String, Integer> e : OLD_DEFAULT_COLORS.entrySet()) {
             Object v = this.tierColors.get(e.getKey());
-            if (!(v instanceof Number n) || n.intValue() != e.getValue()) return false;
+            // older configs store the colors with an alpha byte (0xFFe8ba3a)
+            if (!(v instanceof Number n) || (n.intValue() & 0xFFFFFF) != e.getValue()) return false;
         }
         this.tierColors = defaultColors();
         return true;
+    }
+
+    /**
+     * Balkan Tagger shares config/tiertagger.toml with SwiftTagger and the original TierTagger (same mod id), so an
+     * old file can still point at another tier list's API or at one that no longer exists. Anything that is not
+     * balkantiers.com or a local/LAN address (a test server) goes back to balkantiers.com.
+     * Returns true when something changed (caller saves).
+     */
+    public boolean migrateForeignApiUrl() {
+        if (isOwnOrLocalApi(this.apiUrl)) return false;
+        this.apiUrl = DEFAULT_API_URL;
+        return true;
+    }
+
+    static boolean isOwnOrLocalApi(String url) {
+        if (url == null || url.isBlank()) return false;
+        URI uri;
+        try {
+            uri = URI.create(url.trim());
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        String scheme = uri.getScheme(), host = uri.getHost();
+        if (host == null || !("https".equalsIgnoreCase(scheme) || "http".equalsIgnoreCase(scheme))) return false;
+        host = host.toLowerCase(Locale.ROOT);
+        if (host.equals("balkantiers.com") || host.equals("www.balkantiers.com")) return true;
+        if (host.equals("localhost") || host.equals("[::1]") || host.endsWith(".local") || host.endsWith(".lan")) return true;
+        if (!host.matches("\\d{1,3}(\\.\\d{1,3}){3}")) return false;
+        String[] p = host.split("\\.");
+        int a = Integer.parseInt(p[0]), b = Integer.parseInt(p[1]);
+        return a == 127 || a == 10 || (a == 192 && b == 168) || (a == 172 && b >= 16 && b <= 31);
     }
 
     @Getter
