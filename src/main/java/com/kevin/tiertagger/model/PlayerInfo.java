@@ -68,7 +68,7 @@ public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings
 
     public static CompletableFuture<PlayerInfo> get(HttpClient client, UUID uuid) {
         String endpoint = TierTagger.getManager().getConfig().getApiUrl() + "/v2/profile/" + uuid;
-        final HttpRequest request = HttpRequest.newBuilder(URI.create(endpoint)).GET().build();
+        final HttpRequest request = HttpRequest.newBuilder(URI.create(endpoint)).timeout(TierTagger.REQUEST_TIMEOUT).GET().build();
 
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
@@ -80,12 +80,16 @@ public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings
 
     public static CompletableFuture<Map<String, Ranking>> getRankings(HttpClient client, UUID uuid) {
         String endpoint = TierTagger.getManager().getConfig().getApiUrl() + "/v2/profile/" + uuid + "/rankings";
-        final HttpRequest request = HttpRequest.newBuilder(URI.create(endpoint)).GET().build();
+        final HttpRequest request = HttpRequest.newBuilder(URI.create(endpoint)).timeout(TierTagger.REQUEST_TIMEOUT).GET().build();
 
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                // 404 = not on Balkan Tiers (most players on a server): no tier, nothing to log
-                .thenApply(r -> r.statusCode() == 404 ? null
-                        : TierTagger.GSON.fromJson(r.body(), new TypeToken<Map<String, Ranking>>() {}))
+                .thenApply(r -> {
+                    // 404 = not on Balkan Tiers (most players on a server): no tier, nothing to log.
+                    // Anything else but 200 (rate limit, server error) fails, so TierCache asks again later.
+                    if (r.statusCode() == 404) return null;
+                    if (r.statusCode() != 200) throw new IllegalStateException("Balkan Tiers API HTTP " + r.statusCode());
+                    return TierTagger.GSON.fromJson(r.body(), new TypeToken<Map<String, Ranking>>() {});
+                })
                 .whenComplete((i, t) -> {
                     if (t != null) TierTagger.getLogger().warn("Error getting player rankings ({})", uuid, t);
                 });
@@ -93,7 +97,7 @@ public record PlayerInfo(String uuid, String name, Map<String, Ranking> rankings
 
     public static CompletableFuture<PlayerInfo> search(HttpClient client, String query) {
         String endpoint = TierTagger.getManager().getConfig().getApiUrl() + "/v2/profile/by-name/" + query;
-        final HttpRequest request = HttpRequest.newBuilder(URI.create(endpoint)).GET().build();
+        final HttpRequest request = HttpRequest.newBuilder(URI.create(endpoint)).timeout(TierTagger.REQUEST_TIMEOUT).GET().build();
 
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(r -> {

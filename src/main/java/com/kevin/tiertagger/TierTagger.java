@@ -39,6 +39,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
@@ -60,8 +61,10 @@ public class TierTagger implements ModInitializer {
     private static final ConfigManager<TierTaggerConfig> manager = ConfigManager.createDefault(TierTaggerConfig.class, MOD_ID);
     @Getter
     private static final Logger logger = LoggerFactory.getLogger(TierTagger.class);
+    /** A request that hangs counts as failed after this, so it is asked again instead of waiting forever. */
+    public static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(15);
     @Getter
-    private static final HttpClient client = HttpClient.newHttpClient();
+    private static final HttpClient client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build();
 
     // version check
     @Getter

@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 
 @Getter
 @Setter
@@ -41,14 +40,9 @@ public class TierTaggerConfig implements Serializable {
     private String apiUrl = DEFAULT_API_URL;
 
     public GameMode getGameMode() {
-        Optional<GameMode> opt = TierCache.findMode(this.gameMode);
-        if (opt.isPresent()) {
-            return opt.get();
-        } else {
-            GameMode first = TierCache.getGamemodes().getFirst();
-            if (!first.isNone()) this.gameMode = first.id();
-            return first;
-        }
+        // a mode that isn't in the current list shows the first one, but the choice itself is kept: the list can be
+        // the built-in one for a moment, and the API list that arrives later may have it
+        return TierCache.findMode(this.gameMode).orElseGet(() -> TierCache.getGamemodes().getFirst());
     }
 
     /**

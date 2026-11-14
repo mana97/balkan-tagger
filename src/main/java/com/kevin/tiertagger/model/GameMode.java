@@ -18,12 +18,23 @@ import java.util.concurrent.CompletableFuture;
 public record GameMode(String id, String title) {
     public static final GameMode NONE = new GameMode("annoying_long_id_that_no_one_will_ever_use_just_to_make_sure", "§cNone§r");
 
+    /**
+     * The Balkan Tiers gamemodes in the order /v2/mode/list returns them. Used from the start of the game until the
+     * API list arrives, and for the whole session if it can't be fetched, so tiers never depend on that one request.
+     */
+    public static final List<GameMode> BUILT_IN = List.of(
+            new GameMode("sword", "Sword"), new GameMode("axe", "Axe"), new GameMode("mace", "Mace"),
+            new GameMode("pot", "Pot"), new GameMode("neth_pot", "Nethpot"), new GameMode("uhc", "UHC"),
+            new GameMode("smp", "SMP"), new GameMode("dia_smp", "DiaSMP"), new GameMode("vanilla", "Crystal"),
+            new GameMode("spear", "Spear"));
+
     public static CompletableFuture<List<GameMode>> fetchGamemodes(HttpClient client) {
         String endpoint = TierTagger.getManager().getConfig().getApiUrl() + "/v2/mode/list";
-        final HttpRequest request = HttpRequest.newBuilder(URI.create(endpoint)).GET().build();
+        final HttpRequest request = HttpRequest.newBuilder(URI.create(endpoint)).timeout(TierTagger.REQUEST_TIMEOUT).GET().build();
 
         return client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(r -> {
+                    if (r.statusCode() != 200) throw new IllegalStateException("Balkan Tiers API HTTP " + r.statusCode());
                     JsonObject obj = TierTagger.GSON.fromJson(r.body(), JsonObject.class);
 
                     return obj.entrySet().stream().map(e -> {
